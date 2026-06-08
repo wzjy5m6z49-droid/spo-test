@@ -142,9 +142,8 @@ Public Function CheckFields(ByVal i As Long) As Boolean
     For cntRow = i To endRow
         
         'その他の機器入力チェック
-        '異動前：15,16
-        '後任者：45
-        If cntRow = 15 Or cntRow = 16 Or cntRow = 45 Then
+        '異動前：15のみ
+        If cntRow = 15 Then
             
             If Cells(cntRow, col.確認項目 + 1) <> "" Then
                 If Cells(cntRow, col.確認結果等).Value = "" Then
@@ -159,7 +158,8 @@ Public Function CheckFields(ByVal i As Long) As Boolean
             End If
             
         '異動前チェック
-        ElseIf cntRow = 17 Or cntRow = 18 Or cntRow = 19 Or _
+        'G16もここに入れる
+        ElseIf cntRow = 16 Or cntRow = 17 Or cntRow = 18 Or cntRow = 19 Or _
                cntRow = 20 Or cntRow = 21 Or cntRow = 22 Or _
                cntRow = 24 Then
             
@@ -171,7 +171,7 @@ Public Function CheckFields(ByVal i As Long) As Boolean
                 CheckFields = False
             End If
             
-        '後任者確認：2行下にずらし 46～49
+        '後任者確認：G45～G49
         ElseIf cntRow = 45 Or cntRow = 46 Or cntRow = 47 Or cntRow = 48 Or cntRow = 49 Then
             
             If Cells(cntRow, col.確認結果等).Value = "" Then
@@ -184,12 +184,16 @@ Public Function CheckFields(ByVal i As Long) As Boolean
             
         Else
             
-            '25・26・53・54行目は通常の空欄チェックから除外
-            If cntRow <> 25 And cntRow <> 26 And cntRow <> 52 And cntRow <> 53 And cntRow <> 54 Then
+            '25・26・51・52・53・54行目は通常の空欄チェックから除外
+            If cntRow <> 25 And cntRow <> 26 And _
+               cntRow <> 51 And cntRow <> 52 And _
+               cntRow <> 53 And cntRow <> 54 Then
+               
                 If Cells(cntRow, col.確認結果等).Value = "" Then
                     msg = msg & "【項番" & Cells(cntRow, col.項番) & "】の確認結果等を入力してください。" & vbCrLf
                     CheckFields = False
                 End If
+                
             End If
             
         End If
@@ -214,12 +218,12 @@ Public Function CheckFields(ByVal i As Long) As Boolean
     
     '後任：G51が空欄ならエラー
     If buttonName = "AfterButton" Then
+    
         If Cells(51, col.確認結果等).Value = "" Then
             msg = msg & "【項番" & Cells(51, col.項番) & "】の確認結果等を入力してください。" & vbCrLf
             CheckFields = False
         End If
         
-        '後任：G52が空欄または「いいえ」ならエラー
         If Cells(52, col.確認結果等).Value = "" Then
             msg = msg & "【項番" & Cells(52, col.項番) & "】の確認結果等を入力してください。" & vbCrLf
             CheckFields = False
@@ -229,7 +233,6 @@ Public Function CheckFields(ByVal i As Long) As Boolean
             CheckFields = False
         End If
         
-        '後任：G53に値がある場合、G54は空欄・いいえNG
         If Cells(53, col.確認結果等).Value <> "" Then
             
             If Cells(54, col.確認結果等).Value = "" Then
@@ -242,11 +245,14 @@ Public Function CheckFields(ByVal i As Long) As Boolean
             End If
             
         End If
+        
     End If
         
     If CheckFields = False Then
         MsgBox msg, vbInformation
     End If
+    
+End Function
     
 End Function
 
@@ -380,5 +386,6 @@ Private Sub Worksheet_Change(ByVal Target As Range)
     End If
 
 End Sub
+
 
 
